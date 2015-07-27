@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	<package name="default" extends="struts-default">
+		
+	    
+		
+		<!-- 配置全局的转发 -->
+		<global-results>
+			<result name="login" type="redirectAction">toLogin</result>
+			<result name="exception" type="chain">toLogin</result>    
+			<result name ="sesssioIsOverdue">/WEB-INF/pages/login.jsp</result>
+			<result name ="noAuthority">/WEB-INF/pages/authority.jsp</result>
+		</global-results>
+		
+	    <!-- 配置全局异常-->
+		<global-exception-mappings>
+		 	<exception-mapping result="exception" exception="java.lang.RuntimeException" />
+			<exception-mapping result="exception" exception="com.yd.exception.DaoException" />
+			<exception-mapping result="exception" exception="com.yd.exception.ServiceException" />
+			<exception-mapping result="exception" exception="java.lang.Exception" />
+		</global-exception-mappings>
+		
+		<action name="userLogin" class="com.yd.action.admin.UserAction" method="userLogin">
+			<result name="success" type="redirectAction">index/index.do</result>
+			<result name="loginFail">/WEB-INF/pages/login.jsp</result>
+		</action>
+		
+		<action name="toLogin">
+		    <result>/WEB-INF/pages/toLogin.jsp</result>
+		</action>
+		
+		<action name="logout" class="com.yd.action.admin.UserAction" method="logout">
+			<result>/index.jsp</result>
+		</action>
+		
+		<action name="*">
+			<result>/WEB-INF/pages/index/{1}.jsp</result>
+		</action>
+	</package>
+	
+	
+   </struts>
