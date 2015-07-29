@@ -14,7 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
- * 商家商品 关系表
+ * 商家商品 关系表 （真正的 商品表）
  */
 @Entity
 @Table(name = "T_MERCHANT_ITEM")

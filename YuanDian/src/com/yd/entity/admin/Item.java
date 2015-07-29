@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- *用户实体表
+ *商品类型实体表
  */
 @Entity
 @Table(name = "T_ITEM")

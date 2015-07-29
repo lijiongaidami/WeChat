@@ -29,6 +29,12 @@ public class User implements Serializable   {
 	@Column(name="OPEN_ID",unique=true,nullable = false)
 	private String openID;
 	
+	/**
+	 * 用户类型 用于标识 用户属于  1、普通用户组  2、商家管理组 3、配送员组
+	 */
+	@Column (name = "USER_TYPE")
+	private Integer userType=1;
+	
 	/** 用户名 */
 	@Column(name = "USER_NAME", length = 100)
 	private String userName;
@@ -94,6 +100,13 @@ public class User implements Serializable   {
 	public void setAddress(String address) {
 		this.address = address;
 	}
-	
+
+	public Integer getUserType() {
+		return userType;
+	}
+
+	public void setUserType(Integer userType) {
+		this.userType = userType;
+	}
 	
 }
