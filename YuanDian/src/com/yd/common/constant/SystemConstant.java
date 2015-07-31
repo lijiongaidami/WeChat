@@ -7,7 +7,7 @@ package com.yd.common.constant;
 public class SystemConstant {
 
 	/** 当前用户 */
-	public static final String CURRENT_USER = "user";
+	public static final String CURRENT_USER_OPEN_ID = "openID";
 
 	/** 当前用户所有权限(角色权限+用户权限) */	
 	public static final String CURRENT_USER_AUTHORITY = "currentUserAuthority";

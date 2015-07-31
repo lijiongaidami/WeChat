@@ -2,5 +2,4 @@
 
 <script type="text/javascript">
 </script>
-
-成功进入主页
+需要验证手机号

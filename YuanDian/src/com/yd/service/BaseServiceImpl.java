@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.yd.dao.IBaseDao;
+import com.yd.dao.IMybatisDao;
 import com.yd.exception.DaoException;
 
 /**
@@ -22,6 +23,8 @@ public class BaseServiceImpl implements IBaseService {
 	@Autowired
 	private IBaseDao baseDao;
 	
+	@Autowired
+	private IMybatisDao mybatisDao;
 
 	@Override
 	public void add(Object entity) throws DaoException {
@@ -170,8 +173,16 @@ public class BaseServiceImpl implements IBaseService {
 		this.baseDao = baseDao;
 	}
 
+	public IMybatisDao getMybatisDao() {
+		return mybatisDao;
+	}
+
+	public void setMybatisDao(IMybatisDao mybatisDao) {
+		this.mybatisDao = mybatisDao;
+	}
 
 
+	
 
 
 

@@ -15,8 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 import com.yd.common.constant.SystemConstant;
-import com.yd.entity.admin.User;
 import com.yd.service.IBaseService;
+import com.yd.service.IUserService;
 
 /**
  * 系统逻辑转发处理基类
@@ -30,7 +30,9 @@ public class BaseAction extends ActionSupport {
 	@Autowired
 	public IBaseService baseService;
 	
-
+	@Autowired
+	public IUserService userService;
+	
 	/**
 	 * 取得Action上下文
 	 * 
@@ -120,10 +122,9 @@ public class BaseAction extends ActionSupport {
 	/**
 	 * 得到当前登录人
 	 */
-	public User getCurrentUser() {
+	public String getCurrentUserOpenID() {
 		HttpSession session = this.getHttpSession();
-		return (User) session.getAttribute(SystemConstant.CURRENT_USER);
-		//return userService.getUserByLoginName("admin");
+		return (String) session.getAttribute(SystemConstant.CURRENT_USER_OPEN_ID);
 	}
 	
 
@@ -135,4 +136,12 @@ public class BaseAction extends ActionSupport {
 		this.baseService = baseService;
 	}
 
+	public IUserService getUserService() {
+		return userService;
+	}
+
+	public void setUserService(IUserService userService) {
+		this.userService = userService;
+	}
+	
 }
