@@ -23,6 +23,8 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
 
+
+
 /**
  * 提供接收和推送给公众平台消息的加解密接口(UTF8编码的字符串).
  * <ol>
