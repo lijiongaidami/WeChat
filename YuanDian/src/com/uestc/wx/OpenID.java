@@ -12,12 +12,10 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
-import com.sun.jndi.toolkit.url.Uri;
 import com.uestc.util.JsonUtil;
 import com.uestc.util.Log;
 import com.uestc.util.WeiXinConfig;
