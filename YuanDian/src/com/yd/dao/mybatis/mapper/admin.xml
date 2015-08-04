@@ -1,0 +1,664 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "../dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="admin">
+  	
+  	<!-- 动态运行sql语句 -->
+  	<select id="getDataBySql" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+  		${sql} 
+  	</select>
+  	
+  	<!-- 动态添加 -->
+  	<insert id="dynamicAdd" parameterType="java.util.HashMap" useGeneratedKeys="true" keyProperty="id">
+  		insert into ${tableName} (${paramSql}) values(${valueSql})
+   	</insert>
+  	
+  	<!-- 动态更新 -->
+  	<update id="dynamicUpdate" parameterType="java.util.HashMap" >
+  		update ${tableName} t set ${sql} where t.PK_ID = #{id}
+   	</update>
+  	
+  	<!-- 动态删除 -->
+  	<delete id="dynamicDelete" parameterType="java.util.HashMap" >
+  		delete from ${tableName} where PK_ID = #{id}
+   	</delete>
+  	
+  	<!-- 根据单位得到公章-->
+	<select id="getElectronCachetList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT
+			t.PK_ID as id,
+			t.IMAGE_URL as imageUrl,
+			t.NAME as name,
+			t.TYPE as type,
+			t.FK_UNIT_ID as unitId,
+			t.REMARKS as remarks
+		FROM
+			t_electron_cachet t
+		where
+			t.FK_UNIT_ID = #{unitId}
+			<if test="type != null">
+				AND t.TYPE = #{type}
+			</if>
+			
+	</select>
+  	<!-- 根据用户名模糊查询用户列表 -->
+  	<select id="getUserListByLoginName" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+  	    select 
+  	    	t.LOGIN_NAME as loginName,
+  	    	t.JOB as job 
+  	    from 
+  	    	T_USER t 
+  	    INNER JOIN 
+  	    	T_UNIT TU
+  	    ON 
+  	    	T.FK_USER_UNIT_ID = TU.PK_ID AND TU.ISDELETE = 0
+  	    where 
+  	    	t.LOGIN_NAME != 'admin'
+			and
+  	    	t.LOGIN_NAME like '%${loginName}%' 
+  	   		and 
+  	   		t.ISDELETE = 0 limit 10
+  	</select>
+  	
+  	<!-- 获取系统字典条目列表 -->
+  	<select id="getSystemDictionaryItemList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+  		SELECT 
+  			t.PK_ID as id,
+  			t.ITEM_NAME as itemName,
+  			t.CODE as code
+  		FROM 
+  			T_SYSTEM_DICTIONARY_ITEM t
+	</select>
+  
+  	<!-- 获取系统字典列表 -->
+  	<select id="getSystemDictionaryList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+  		SELECT 
+  			t.PK_ID as id,
+  			t.NAME as name,
+  			t.SORT as sort,
+  			t.CODE as code
+  		FROM 
+  			T_SYSTEM_DICTIONARY t
+  		where 
+  			t.ISDELETE = 0
+  			AND 
+  			t.CODE = #{code}
+  			<if test="name != null">
+  				AND t.NAME LIKE '%${name}%'
+  			</if>
+  		ORDER BY t.SORT ASC
+	</select>
+  
+  	<!-- 获取字典最大的排序号 -->
+  	<select id="getSystemDictionaryMaxSort" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+  		SELECT 
+  			max(t.sort)
+  		FROM 
+  			T_SYSTEM_DICTIONARY t
+  		where 
+  			t.CODE = #{code}
+	</select>
+   
+   <!-- =================================新的分割线================================== -->
+  	<!-- 根据类型获取部门 -->
+  	<select id="getChejianUnitList" parameterType="java.lang.String" resultType="java.util.HashMap">
+  		SELECT
+			t.PK_ID as id,
+			t.UNITNAME as unitName,
+			t.PARENTID as parentId,
+			t.ISOFFICE as isOffice
+		FROM
+			t_unit t
+		where
+			t.ISDELETE = 0 AND
+			t.TYPE = #{type} 
+			<if test="isOffice != null">
+				AND	t.ISOFFICE = #{isOffice}
+			</if>
+			ORDER BY
+				t.ISOFFICE DESC
+	</select>  	
+
+  	<!-- 获取所有线 -->
+  	<select id="getAllLineList" parameterType="java.lang.String" resultType="java.util.HashMap">
+  		SELECT 
+  			t.PK_ID as id,
+  			t.NAME as name,
+  			t.LINECODE as lineCode,
+  			t.NUMBER as number
+  		FROM  
+  			T_LINE t 
+  		WHERE 
+  			t.ISDELETE = 0
+  			<if test = "searchLineName !=null">
+  				and t.NAME like '%${searchLineName}%'
+  			</if>
+  		ORDER BY t.NUMBER ASC
+  	</select>
+  	
+  	<!-- 根据站获得线 -->
+  	<select id="getLineByStationIdList" parameterType="java.lang.Integer" resultType="java.util.HashMap">
+  		SELECT 
+  			t.PK_ID as id,
+  			t.NAME as name,
+  			t.NUMBER as number
+  		FROM  
+  			T_LINE t 
+  		INNER JOIN 
+			T_LINE_RAILWAY_STATION ti 
+		ON 
+			ti.FK_LINE_ID = t.PK_ID
+  		WHERE 
+  			t.ISDELETE = 0 AND ti.FK_RAILWAY_STATION_ID = #{railWayStationId}
+  		ORDER BY t.PK_ID ASC
+  	</select>
+  	<!-- 根据参数获取站,unitId单独一个工区，unitIds部分工区、stationName名字模糊查询 -->
+  	<select id="getRailwayStationList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	  	SELECT
+			DISTINCT(t.railwayStationId) as id,
+			t.NUMBER as number,
+			t.KILOMETER_POST as kilometerPost,
+			t.STATION_NAME as stationName,
+			t.LINENUMBER as lineNumber
+		FROM
+			(SELECT 
+				tr.PK_ID AS railwayStationId,
+				tr.NUMBER as NUMBER,
+				tr.STATION_NAME as STATION_NAME,
+				tlr.KILOMETER_POST as KILOMETER_POST,
+				tl.NUMBER as 	LINENUMBER
+			FROM
+				t_railway_station tr
+			INNER JOIN
+				t_line_railway_station tlr
+			ON
+				tlr.FK_RAILWAY_STATION_ID = tr.PK_ID
+			INNER JOIN	
+				t_line tl
+			ON
+				tl.PK_ID = tlr.FK_LINE_ID
+			WHERE
+				tr.ISDELETE = 0 
+				<if test="lineId != null">
+  					AND tlr.FK_LINE_ID = #{lineId}
+  				</if>
+			) t	
+		INNER JOIN
+			t_unit_railway_station tur
+		ON
+			tur.FK_RAILWAY_STATION_ID = t.railwayStationId
+		INNER JOIN
+			t_unit tu
+		ON 
+			tu.PK_ID = tur.FK_UNIT_ID
+		WHERE
+			1=1
+			<if test="unitIds != null">
+  				AND tur.FK_UNIT_ID in (${unitIds})
+  			</if>
+			<if test="unitName != null">
+  				AND tu.UNITNAME like '%${unitName}%'
+  			</if>
+			<if test="unitId != null">
+  				AND tu.PK_ID = #{unitId}
+  			</if>
+			
+  		ORDER BY
+			 t.LINENUMBER ASC ,t.KILOMETER_POST ASC
+  	</select>
+  	<!-- 根据参数获取站,unitId单独一个工区，unitIds部分工区、线别ID、查询出带有车间信息的 -->
+  	<select id="getRailwayStationByLineId" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+  		SELECT 
+  			t.PK_ID as id,
+  			t.FK_UNIT_ID as fkUnitId,
+  			tu1.PK_ID as chejianId,
+  			t.NUMBER as number,
+  			tu.UNITNAME as gongquName,
+  			tu1.UNITNAME as chejianName,
+  			TLRS.KILOMETER_POST as kilometerPost,
+  			t.STATION_NAME as stationName
+  		FROM  
+  			T_RAILWAY_STATION t 
+  		INNER JOIN 
+  			T_LINE_RAILWAY_STATION TLRS
+  		ON
+  			TLRS.FK_RAILWAY_STATION_ID = t.PK_ID
+  		INNER JOIN
+			T_LINE_RAILWAY_STATION TLR
+		ON
+			TLR.FK_RAILWAY_STATION_ID = TLRS.PK_ID
+  		INNER JOIN 
+  			T_UNIT tu
+  		ON
+  			tu.PK_ID = t.FK_UNIT_ID
+  		INNER JOIN 
+  			T_UNIT tu1
+  		ON
+  			tu1.PK_ID = tu.PARENTID
+  		WHERE 
+  			t.ISDELETE = 0 
+  			AND t.FK_UNIT_ID in (${unitIds})
+  			AND TLRS.FK_LINE_ID = #{lineId}
+  			<if test="chejianName != null">
+  	  			AND tu1.UNITNAME like '%${chejianName}%'
+  			</if>
+  		ORDER BY TLR.NUMBER ASC	
+  	</select>
+  	
+  	<!-- 获取直接子节点-->
+  	<select id="getChildrenUnit" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+  		SELECT 
+  			t.PK_ID as id,
+  			t.PARENTID as parentId,
+  			t.TYPE as type,
+  			t.ADDRESS as  unitAddress,
+  			t.UNITPHONE as unitPhone,
+  			t.UNITNAME as unitName,
+  			t.DUTYPHONE as dutyPhone,
+  			t.unitCode as unitCode,
+  			t.ISOFFICE as isOffice
+  		FROM  
+  			T_UNIT t 
+  		WHERE 
+  			t.ISDELETE = 0 
+  			<if test="unitId != null">
+  				AND t.PARENTID = #{unitId}
+  			</if>
+  			<if test="isOffice != null">
+  				AND t.ISOFFICE = #{isOffice}
+  			</if>
+  		ORDER BY t.unitCode asc, t.ISOFFICE DESC	
+  	</select>
+  	
+  	<!-- 得到站的线别信息-->
+  	<select id="getStationLineInfo" parameterType="java.lang.Integer" resultType="java.util.HashMap">
+  		SELECT 
+  			t.PK_ID as id,
+  			t.FK_LINE_ID as lineId,
+  			t.FK_RAILWAY_STATION_ID as railwayStationId,
+  			tl.NAME as name,
+  			tl.NUMBER as number,
+  			t.KILOMETER_POST as kilometerPost,
+  			t.END_KILOMETER_POST as endKilometerPost
+  		FROM  
+  			T_LINE_RAILWAY_STATION t 
+  		INNER JOIN 
+			T_LINE tl
+		ON 
+			t.FK_LINE_ID = tl.PK_ID
+  		WHERE 
+  			t.FK_RAILWAY_STATION_ID = #{railwayStationId}
+  	</select>
+  	
+  	<!-- 删除车站的工区信息-->
+  	<delete id="deleteUnitRailwayStation" parameterType="java.util.HashMap">
+		DELETE FROM
+			T_UNIT_RAILWAY_STATION 
+		WHERE
+			FK_UNIT_ID = #{unitId}
+			AND FK_RAILWAY_STATION_ID = #{railwayStationId}
+  	</delete>
+  	
+  	<!-- 根据单位ID查询子单位  -->
+  	<select id="getAllChildrenUnit" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+  		SELECT 
+  			t.PK_ID as id,
+  			t.UNITNAME as unitName
+  		FROM 
+  			T_UNIT t
+  		WHERE 
+  			t.ISDELETE = 0 
+  			<if test="type != null">
+	  			and t.type in (${type})
+	  		</if>
+	  		<if test = "notQueryType != null">
+	  			and t.type not in (${notQueryType})
+	  		</if>
+	  		<if test = "isOffice != null">
+	  			and t.isOffice = #{isOffice}
+	  		</if>
+  		AND
+  			FIND_IN_SET(PK_ID, queryChildrenAreaInfo(#{unitId})); 
+	</select>
+  	
+  	<!-- 查询用户列表  -->
+  	<select id="getUserListForSelect" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+  		SELECT 
+  			t.PK_ID as id,
+  			t.USER_NAME as userName
+  		FROM 
+  			T_USER t
+  		WHERE 
+  			t.ISDELETE = 0
+  			<if test="unitId != null">
+	  			and t.FK_USER_UNIT_ID = #{unitId}
+	  		</if>
+	  		<if test = "notIncludeIds != null">
+	  			and t.PK_ID not in (${notIncludeIds})
+	  		</if>
+	</select>
+  	
+  	<!-- 根据用户单位获取车站  -->
+  	<select id="getRailwayStationListByUnit" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+  		SELECT 
+  			t.PK_ID as id,
+  			t.NUMBER as number,
+  			t.STATION_NAME as stationName
+  		FROM  
+  			T_RAILWAY_STATION t 
+  		INNER JOIN
+  			T_UNIT_RAILWAY_STATION tur
+  		ON
+  			tur.FK_RAILWAY_STATION_ID = t.PK_ID
+  		WHERE 
+  			t.ISDELETE = 0 
+  			<if test="unitIds != null">
+  				AND tur.FK_UNIT_ID in (${unitIds})
+  			</if>
+  			<if test="stationName != null">
+  				AND t.STATION_NAME like '%${stationName}%'
+  			</if>
+  		GROUP BY T.PK_ID
+  		ORDER BY t.PK_ID ASC
+	</select>
+  	
+  	<!-- 得到所有车站  -->
+  	<select id="getAllRailwayStationList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+  		SELECT 
+  			t.PK_ID as id,
+  			t.NUMBER as number,
+  			GROUP_CONCAT(DISTINCT(tu.UNITNAME)) as unitNames,
+  			GROUP_CONCAT(DISTINCT(CAST(tu.PK_ID as char))) as unitIds,
+			GROUP_CONCAT(DISTINCT(tl.NAME)) as lineNames,
+  			t.STATION_NAME as stationName
+ 		FROM  
+  			T_RAILWAY_STATION t 
+  		LEFT JOIN
+  			T_UNIT_RAILWAY_STATION tur
+  		ON
+  			t.PK_ID = tur.FK_RAILWAY_STATION_ID
+  		LEFT JOIN 
+  			T_UNIT tu
+  		ON
+  			tur.FK_UNIT_ID = tu.PK_ID	
+		LEFT JOIN 
+			t_line_railway_station tlrs
+		ON
+  			tlrs.FK_RAILWAY_STATION_ID = t.PK_ID
+		LEFT JOIN 
+			t_line tl
+		ON	
+			tl.PK_ID = tlrs.FK_LINE_ID and tlrs.FK_RAILWAY_STATION_ID = t.PK_ID	
+  		WHERE 
+  			t.ISDELETE = 0 
+  			<if test="unitId != null">
+  				AND tur.FK_UNIT_ID = #{unitId}
+  			</if>
+  			<if test="unitIds!= null">
+  				AND tur.FK_UNIT_ID in (${unitIds})
+  			</if>
+  			<if test="stationName != null">
+  				AND t.STATION_NAME like '%${stationName}%'
+  			</if>
+  		GROUP BY
+  			t.PK_ID
+	</select>
+	
+  	<!--  获取角色权限列表  -->
+  	<select id="getRolePermissionList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+  		SELECT 
+  			t.PK_ID as id,
+  			t.FK_ROLE_ID as roleId,
+  			t.MODULE_CODE as moduleCode,
+  			t.ROOT_MODULE as rootModule
+  		FROM  
+  			T_ROLE_PERMISSION t 
+  		WHERE 
+  			t.FK_ROLE_ID = #{roleId}
+  			<if test="rootModule != null">
+  			AND 
+  			t.ROOT_MODULE = #{rootModule}
+  			</if>
+  		ORDER BY t.PK_ID ASC
+	</select>
+	
+  	<!--  删除角色权限  -->
+  	<delete id="deleteRolePermission" parameterType="java.util.HashMap">
+  		DELETE FROM 
+  			T_ROLE_PERMISSION 
+  		WHERE 
+  			FK_ROLE_ID = #{roleId}
+  			AND 
+  			ROOT_MODULE = #{rootModule}
+	</delete>
+	
+  	<!-- 添加角色权限  -->
+  	<insert id="addRolePermission" parameterType="java.util.HashMap">
+		INSERT INTO 
+			T_ROLE_PERMISSION
+		( 
+  			FK_ROLE_ID,
+  			MODULE_CODE,
+  			ROOT_MODULE
+		) 
+		VALUES  
+	    <foreach collection="moduleCodeArray" item="item" index="index" separator=","> 	       
+	    (  
+        	#{roleId},
+        	#{item}, 
+        	#{rootModule}
+       	)  
+	    </foreach> 
+	</insert>
+	
+	
+  	<!--  获取用户权限列表  -->
+  	<select id="getUserPermissionList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+  		SELECT 
+  			t.PK_ID as id,
+  			t.FK_USER_ID as userId,
+  			t.MODULE_CODE as moduleCode,
+  			t.ROOT_MODULE as rootModule
+  		FROM  
+  			T_USER_PERMISSION t 
+  		WHERE 
+  			t.FK_USER_ID = #{userId}
+  			<if test="rootModule != null">
+  			AND 
+  			t.ROOT_MODULE = #{rootModule}
+  			</if>
+  		ORDER BY t.PK_ID ASC
+	</select>
+	
+  	<!--  删除角色权限  -->
+  	<delete id="deleteUserPermission" parameterType="java.util.HashMap">
+  		DELETE FROM 
+  			T_USER_PERMISSION 
+  		WHERE 
+  			FK_USER_ID = #{userId}
+  			AND 
+  			ROOT_MODULE = #{rootModule}
+	</delete>
+	
+  	<!-- 添加角色权限  -->
+  	<insert id="addUserPermission" parameterType="java.util.HashMap">
+		INSERT INTO 
+			T_USER_PERMISSION
+		( 
+  			FK_USER_ID,
+  			MODULE_CODE,
+  			ROOT_MODULE
+		) 
+		VALUES  
+	    <foreach collection="moduleCodeArray" item="item" index="index" separator=","> 	       
+	    (  
+        	#{userId},
+        	#{item}, 
+        	#{rootModule}
+       	)  
+	    </foreach> 
+	</insert>
+	
+	<!-- 根据工区Id获取车间和段。 -->
+	<select id="getParentByUnitId" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT 
+			T.UNITNAME as unitName,
+			T.PK_ID as unitId,
+			T1.UNITNAME as cheUnitName,
+			T1.PK_ID as cheUnitId,
+			T2.UNITNAME as duanUnitName,
+			T2.PK_ID as duanUnitId
+		FROM 
+			T_UNIT T
+		INNER JOIN 
+			T_UNIT T1
+		ON
+			T.PARENTID = T1.PK_ID
+		INNER JOIN 
+			T_UNIT T2
+		ON
+			T1.PARENTID = T2.PK_ID
+		WHERE
+			T.PK_ID = #{unitId}
+	</select>
+	<!-- 获取该单位的所有父亲节点 -->
+	<select id="getAllParentUnitId" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT
+			T2.PK_ID AS id
+		FROM
+			(SELECT
+				@r AS _id,
+				(SELECT
+					@r := parentid
+				 FROM
+					t_unit
+				 WHERE
+					PK_ID = _id
+					) AS parentid,
+					@l := @l + 1 AS lvl
+				FROM
+					(SELECT
+						@r := #{unitId}, @l := 0) vars,  
+						t_unit h
+					 WHERE
+						@r != 0
+					) T1
+		JOIN t_unit T2 ON T1._id = T2.PK_ID
+		ORDER BY
+			T1.lvl ASC
+	</select>
+	
+	<!-- 获取系统配置列表 -->
+	<select id="getSystemConfigList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT
+			T.PK_ID as id,
+			T.VALUE as value,
+			T.TYPE as type,
+			T.DESCRIPTION as description
+		FROM
+			T_SYSTEM_CONFIG T
+		WHERE 
+			1 = 1
+			<if test="description != null">
+				AND T.DESCRIPTION LIKE '%${description}%'
+			</if>
+	</select>
+	
+	<!-- 获取系统配置列表 -->
+	<select id="getAllUserByUnitId" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT
+			T.PK_ID as id,
+			T.USER_NAME as userName,
+			T.IS_LOGIN as isLogin,
+			T.FK_USER_UNIT_ID as unitId,
+			TU.UNITNAME as unitName
+		FROM
+			T_USER T 
+		INNER JOIN 
+			T_UNIT TU
+		ON 
+			TU.PK_ID = T.FK_USER_UNIT_ID
+		WHERE 
+			T.ISDELETE = 0
+			AND 
+			T.FK_USER_UNIT_ID IN (${unitIds})
+			AND 
+			T.USER_TYPE = #{userType}
+			AND 
+			T.IS_LOGIN IS NOT NULL
+		ORDER BY 
+			T.IS_LOGIN ASC
+	</select>
+	
+	<!-- 获取意见反馈列表  -->
+	<select id="getSuggestionList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT
+			T.PK_ID as id,
+			T.FK_SYSTEM_DICTIONARY_TYPE as type,
+			CAST(DATE_FORMAT(T.SUBMIT_DATE, '%Y-%m-%d %H:%i:%s') AS CHAR) as submitDate,
+			T.FK_USER_ID as userId,
+			T.TITLE as title,
+			T.CONTENT as content,
+			T.STATUS as status,
+			T.RESULT as result,
+			TS.NAME as typeName,
+			TU.USER_NAME as userName,
+			TUN.UNITNAME as unitName
+		FROM
+			T_SUGGESTION T 
+		INNER JOIN 
+			T_USER TU
+		ON 
+			TU.PK_ID = T.FK_USER_ID
+		INNER JOIN 
+			T_UNIT TUN
+		ON 
+			TUN.PK_ID = TU.FK_USER_UNIT_ID
+		INNER JOIN 
+			T_SYSTEM_DICTIONARY TS
+		ON 
+			TS.PK_ID = T.FK_SYSTEM_DICTIONARY_TYPE
+		WHERE 
+			TU.FK_USER_UNIT_ID IN (${unitIds})
+			<if test="status != null">
+				AND T.STATUS = #{status}
+			</if>
+			<if test="type != null">
+				AND T.FK_SYSTEM_DICTIONARY_TYPE = #{type}
+			</if>
+			<if test="minSubmitDate != null">
+				AND T.SUBMIT_DATE >= #{minSubmitDate}
+			</if>
+			<if test="maxSubmitDate != null">
+				AND T.SUBMIT_DATE <![CDATA[ <= ]]> #{maxSubmitDate}
+			</if>
+		ORDER BY T.STATUS ASC,T.PK_ID DESC
+	</select>
+	
+	<!-- 根据单位得到公章-->
+	<select id="getCachetImagUrl" parameterType="java.util.HashMap" resultType="java.lang.String">
+		SELECT
+			t.IMAGE_URL as imageUrl
+		FROM
+			t_electron_cachet t
+		where
+			t.FK_UNIT_ID = #{unitId}
+			<if test="type != null">
+				AND t.TYPE = #{type}
+			</if>
+		limit 1
+	</select>
+	
+	<!-- 验证线名是否存在  -->
+	<select id="validateLineName" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		SELECT 
+			COUNT(1) 
+		FROM 
+			T_LINE T 
+		WHERE 
+			T.NAME = #{lineName}
+	</select>
+	
+</mapper>
