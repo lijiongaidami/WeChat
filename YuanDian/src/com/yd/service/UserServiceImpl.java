@@ -4,10 +4,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.yd.entity.admin.User;
 import com.yd.exception.ServiceException;
 
+@Service
+@Component(value="userService")
 public class UserServiceImpl extends BaseServiceImpl implements IUserService{
 
 	@Override

@@ -31,6 +31,11 @@ import com.uestc.wx.HandleMessage;
 public class CheckServer extends BaseAction {
 
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3830419351241121072L;
+
 	@Action (value = "CheckServer")
 	public void receiveMsgFromWX() throws IOException {
 		HttpServletRequest request = this.getHttpServletRequest();
