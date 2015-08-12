@@ -50,6 +50,15 @@ public class HandleMessage {
 			}
 		}
 		
+		// 处理普通文本消息
+		else if (msgType.equals(WeiXinConfig.MSG_TEXT)) {
+			String content = root.getElementsByTagName("Content").item(0).getTextContent();
+			if (content.equals("注册")){
+				Log.logger.debug(String.format("收到用户：%s的\"注册\"文本消息", fromUserName));
+				return RegisterEvent.responseTextEvent(fromUserName, toUserName); // 发送方和接收方这里要做调换！
+			}
+		}
+		
 		return null;
 	}
 

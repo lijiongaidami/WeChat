@@ -51,7 +51,7 @@ public class Menu {
 	}
 
 	public static void main(String[] args) {
-		String accessToken = "CudXk-iTeW2w1Vrco4trZer7XDLuRiLx4GtAPRNM0Oe9BUr_VC2E4nM12dFOch00BTg2JOcnK_ygJaazY3BbVWNfVARDpOD1txibGNYG6cQ";
+		String accessToken = "eEPvtlWlz3GpSiivsh4uxmDBmUXSNobOqQrTkEBAwxVMIaaKztRUfhs8VkLwFw6iei2bxNaWJcmcLsOgjFrJb1klJwMJN_p2UjDcA4TZ9SM";
 		Menu menu = new Menu(accessToken);
 		try {
 			menu.createMenu();
