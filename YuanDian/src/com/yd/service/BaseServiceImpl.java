@@ -21,10 +21,10 @@ import com.yd.exception.DaoException;
 @Component(value = "baseService")
 public class BaseServiceImpl implements IBaseService {
 	@Autowired
-	private IBaseDao baseDao;
+	protected IBaseDao baseDao;
 	
 	@Autowired
-	private IMybatisDao mybatisDao;
+	protected IMybatisDao mybatisDao;
 
 	@Override
 	public void add(Object entity) throws DaoException {

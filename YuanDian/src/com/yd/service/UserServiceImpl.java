@@ -45,7 +45,6 @@ public class UserServiceImpl extends BaseServiceImpl implements IUserService{
 				user.setOpenID(openID);
 			if(!StringUtils.isBlank(mobileNumber))
 				user.setMobileNumber(mobileNumber);
-			
 			return 0;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

@@ -58,5 +58,19 @@ public class UserAction extends BaseAction{
 		HttpServletRequest request = this.getHttpServletRequest();
 		
 	}
-		
+	
+	@Action(value = "validateCode")
+	public void validateCode(){
+		String result = this.smsService.validateCode("15682059369", "038440");
+		System.out.println(result);
+	}
+	
+	@Action(value = "sendSMS")
+	public void sendSMS(){
+		try {
+			this.smsService.sendSMS("15682059369");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

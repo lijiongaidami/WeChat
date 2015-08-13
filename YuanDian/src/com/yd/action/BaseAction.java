@@ -16,6 +16,7 @@ import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 import com.yd.common.constant.SystemConstant;
 import com.yd.service.IBaseService;
+import com.yd.service.ISMSService;
 import com.yd.service.IUserService;
 
 /**
@@ -33,6 +34,8 @@ public class BaseAction extends ActionSupport {
 	@Autowired
 	public IUserService userService;
 	
+	@Autowired
+	public ISMSService smsService;
 	/**
 	 * 取得Action上下文
 	 * 
@@ -143,5 +146,14 @@ public class BaseAction extends ActionSupport {
 	public void setUserService(IUserService userService) {
 		this.userService = userService;
 	}
+
+	public ISMSService getSmsService() {
+		return smsService;
+	}
+
+	public void setSmsService(ISMSService smsService) {
+		this.smsService = smsService;
+	}
+	
 	
 }
