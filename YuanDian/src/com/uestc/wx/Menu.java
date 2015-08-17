@@ -17,7 +17,7 @@ import org.apache.http.util.EntityUtils;
 
 public class Menu {
 
-	String menuString = "{\"button\":[{\"type\":\"view\", \"name\":\"客户端\", \"url\":\"http://121.40.175.6/YuanDianZone/店铺主页-圆点水果.html\"},{\"type\":\"view\", \"name\":\"商家端\", \"url\":\"https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxee73b33840cfd09b&redirect_uri=http%3A%2F%2Fwww.yuandianzone.com%2FYuanDianZone%2FOpenID&response_type=code&scope=snsapi_base&state=ok#wechat_redirect\"}, {\"type\":\"view\", \"name\":\"配送端\", \"url\":\"http://www.baidu.com\"}]}";
+	String menuString = "{\"button\":[{\"type\":\"view\", \"name\":\"客户端\", \"url\":\"http://121.40.175.6/YuanDianZone/店铺主页-圆点水果.html\"},{\"type\":\"view\", \"name\":\"商家端\", \"url\":\"https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxee73b33840cfd09b&redirect_uri=http://www.yuandianzone.com/YuanDian/openID.do&response_type=code&scope=snsapi_base&state=ok#wechat_redirect\"}, {\"type\":\"view\", \"name\":\"配送端\", \"url\":\"http://www.baidu.com\"}]}";
 //	String menuString = "{\"button\":[{\"type\":\"view\", \"name\":\"客户端\", \"url\":\"http://121.40.175.6/YuanDianZone/%E5%BA%97%E9%93%BA%E4%B8%BB%E9%A1%B5-%E5%9C%86%E7%82%B9%E6%B0%B4%E6%9E%9C.html\"},{\"type\":\"view\", \"name\":\"商家端\", \"url\":\"https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx520c15f417810387&redirect_uri=http%3A%2F%2Fchong.qq.com%2Fphp%2Findex.php%3Fd%3D%26c%3DwxAdapter%26m%3DmobileDeal%26showwxpaytitle%3D1%26vb2ctag%3D4_2030_5_1194_60&response_type=code&scope=snsapi_base&state=123#wechat_redirect\"}, {\"type\":\"view\", \"name\":\"配送端\", \"url\":\"http://www.baidu.com\"}]}";
 	String accessToken;
 
@@ -51,7 +51,7 @@ public class Menu {
 	}
 
 	public static void main(String[] args) {
-		String accessToken = "eEPvtlWlz3GpSiivsh4uxmDBmUXSNobOqQrTkEBAwxVMIaaKztRUfhs8VkLwFw6iei2bxNaWJcmcLsOgjFrJb1klJwMJN_p2UjDcA4TZ9SM";
+		String accessToken = "uvdRgnuYf0ObFYtIfEYOxgwspdJGqlrCxCH2WzXGDFrNvPhg6g5OXOXItIC5t9Fl6-R32zXVex23t1tjXOLz3NJnYkkMqm8sKcs92nxkmIQ";
 		Menu menu = new Menu(accessToken);
 		try {
 			menu.createMenu();

@@ -23,7 +23,7 @@ public class RegisterEvent {
 	public static String responseTextEvent(String toUserName, String fromUserName) {
 		String picURL = WXProperties.getValue("base_url") + WXProperties.getValue("subscribeImage");
 		Log.logger.debug("注册图片的地址是：" + picURL);
-		String registerURL = WXProperties.getValue("base_url") + WXProperties.getValue("register_url");
+		String registerURL = WXProperties.getValue("base_url") + WXProperties.getValue("register_url") + "?open_id=" + toUserName; // 加上客户的open_id
 		Log.logger.debug("注册页面的链接地址是：" + registerURL);
 		StringBuilder sb = new StringBuilder();
 		sb.append("<xml>");
